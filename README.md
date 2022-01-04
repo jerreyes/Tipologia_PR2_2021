@@ -12,3 +12,5 @@ This project was developed by Jover Erreyes Pilozo
 
 # Acknowledgements
 The dataset used comes from the Kaggle (https://www.kaggle.com/adityakadiwal/water-potability) platform and has been used for academic purposes only. 
+
+The presentation video is on google drive (https://drive.google.com/file/d/1dn8dtjGIdhGahSRj1FriynZ9Os0y8cZG/view?usp=sharing) only have access the professor.
