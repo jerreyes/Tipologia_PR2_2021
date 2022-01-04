@@ -1,0 +1,131 @@
+https://www.kaggle.com/adityakadiwal/water-potability
+
+
+setwd("C:/Users/Willy/Desktop/Master UOC/1r Semestre/Tipología y ciclo de vida de los datos/Practica 2 -")
+
+data <- read.csv("water_potability.csv", sep = ",", stringsAsFactors = TRUE)
+
+str(data)
+dim(data)
+
+summary(data)
+table(data$Potability)
+
+for (i in 1:lon) {
++     cat('Variable:', colnames(data[i]), '- Tipo de dato:', class(data[, i]), "\n")
++ }
+
+
+if(!require(ggplot2)){
+install.packages('ggplot2', repos='http://cran.us.r-project.org')
+library(ggplot2)
+}
+
+
+if(!require(ggpubr)){
+install.packages('ggpubr', repos='http://cran.us.r-project.org')
+library(ggpubr)
+}
+
+
+if(!require(gridExtra)){
+install.packages('gridExtra', repos='http://cran.us.r-project.org')
+library(gridExtra)
+}
+
+
+if(!require(C50)){
+install.packages('C50', repos='http://cran.us.r-project.org')
+library(C50)
+}
+
+boxplot(data_mf$ph)
+boxplot(data_mf$Hardness)
+
+------------------------------------------------------
+Correlación Pearson (se debe cumplir normalidad)
+
+if (!require("corrplot")) install.packages("corrplot")
+library(corrplot)
+cor(data_mf, method = "pearson")
+corrplot(cor(data_mf, method = "pearson"))
+
+-----------------------------------------------------
+
+if (!require("corrplot")) install.packages("corrplot")
+library(corrplot)
+cor(data_mf, method = "spearman")
+corrplot(cor(data_mf, method = "spearman"))
+
+----------------------------------------------------------------
+
+
+ggplot(tmp,aes(Potability))+geom_bar() +
+    labs(x="Potable o no potable", y="Número de casos")+
+    guides(fill=guide_legend(title=""))+
+    scale_fill_manual(values=c("blue","#008000"))+ggtitle("Agua Potable")
+
+ggplot(tmp,aes(Potability))+geom_bar() +
+    labs(x="Potable o no potable", y="Número de casos")+
+    guides(fill=guide_legend(title=""))+
+    scale_fill_manual(values=c("blue","#008000"))+ggtitle("Agua Potable")
+
+ggplot(tmp,aes(Potability))+geom_bar() +
+    labs(x="Potable o no potable", y="Número de casos")+
+    guides(fill=guide_legend(title=""))+
+    scale_fill_manual(values=c("blue","#008000"))+ggtitle("Agua Potable")
+
+
+---------------------------------------------------------------------------
+
+
+tmp <- data.frame(data_mf)
+tmp$Potability[tmp$Potability == 1] <- "Si Potable"
+tmp$Potability[tmp$Potability == 0] <- "No Potable"
+plot(tmp$Potability)
+
+-------------------------------------------------------------------------------------
+
+set.seed(1)
+data_random <- data_mf[sample(nrow(data_mf)),]
+set.seed(2184)
+summary(data_random[10])
+
+str(data_random[10])
+y <- data_random[,10]
+x <- data_random[, -10]
+
+split_prop <- 3
+max_split <- floor(nrow(x)/split_prop)
+indexes = sample(1:nrow(data_mf), size=floor(((split_prop-1)/split_prop)*nrow(data_mf)))
+
+trainX<-x[indexes,]
+trainy<-y[indexes]
+testX<-x[-indexes,]
+testy<-y[-indexes]
+
+
+# Se comprueba que es una tercera parte del total
+dim(trainX)
+
+
+
+trainy = as.factor(trainy)
+model <- C50::C5.0(trainX, trainy,rules=TRUE )
+summary(model)
+
+model <- C50::C5.0(trainX, trainy)
+plot(model)
+
+
+
+predicted_model <- predict( model, testX, type="class")
+print(sprintf("La precisión del árbol es: %.4f %%",100*sum(predicted_model == testy) / length(predicted_model)))
+
+
+mat_conf<-table(testy,Predicted=predicted_model)
+mat_conf
+
+
+write.csv(data_mf, "data_clean.csv", row.names = FALSE)
+

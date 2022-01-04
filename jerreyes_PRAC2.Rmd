@@ -1,0 +1,404 @@
+---
+title: "Tipología y ciclo de vida de los datos - Practica 2: Limpieza y validación de los datos"
+author: "Jover Erreyes Pilozo"
+date: " January 2022"
+output: pdf_document
+---
+
+## 1. Descripción de la Práctica a realizar
+
+El objetivo de esta actividad será el tratamiento de un dataset, que puede ser el creado en la práctica 1 o bien cualquier dataset libre disponible en Kaggle (https://www.kaggle.com). Algunos ejemplos de dataset con los que podéis trabajar son: 
+
+  * Red Wine Quality (https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009)
+  * Titanic: Machine Learning from Disaster (https://www.kaggle.com/c/titanic)
+  
+El último ejemplo corresponde a una competición activa de Kaggle de manera que, opcionalmente, podéis aprovechar el trabajo realizado durante la práctica para entrar en esta competición.
+
+Siguiendo las principales etapas de un proyecto analítico, las diferentes tareas a realizar (y justificar) son las siguientes:
+
+  1. Descripción del dataset. ¿Por qué es importante y qué pregunta/problema pretende responder?
+  2. Integración y selección de los datos de interés a analizar.
+  3. Limpieza de los datos.$\newline$
+    3.1. ¿Los datos contienen ceros o elementos vacíos? ¿Cómo gestionarías cada uno de estos casos? $\newline$
+    3.2. Identificación y tratamiento de valores extremos.
+  4. Análisis de los datos.$\newline$
+    4.1. Selección de los grupos de datos que se quieren analizar/comparar (planificación de los análisis a aplicar).$\newline$ 
+    4.2. Comprobación de la normalidad y homogeneidad de la varianza.$\newline$
+    4.3. Aplicación de pruebas estadísticas para comparar los grupos de datos. En función de los datos y el objetivo del estudio, aplicar pruebas de contraste de hipótesis, correlaciones, regresiones, etc. Aplicar al menos tres métodos de análisis diferentes.
+  5. Representación de los resultados a partir de tablas y gráficas. 
+  6. Resolución del problema. A partir de los resultados obtenidos, ¿cuáles son las conclusiones? ¿Los resultados permiten responder al problema? 
+  7. Código: Hay que adjuntar el código, preferiblemente en R, con el que se ha realizado la limpieza, análisis y representación de los datos. Si lo preferís, también podéis trabajar en Python.
+  
+  
+## 2. Resolución 
+
+### 2.1 Descripción del dataset escogido
+
+A través del siguiente enlace se encuentra el repositorio de github del proyecto: https://github.com/jerreyes/Tipologia_PR2_2021 
+
+El set de datos ha sido estraido de la plataforma Kaggle (https://www.kaggle.com/adityakadiwal/water-potability) se ha obtenido el dataset que se trabajará a lo largo de la práctica con el objetivo de llevar a cabo tareas de limpieza y validación de datos. Este dataset cuenta con 10 variables o columnas y 3276 registros, estas 10 variables són las siguientes:
+
+  \textbf{1. pH value:} Ofrece información sobre el ph, que a su vez indica la condición ácida o alcalina del estado del agua, según la OMS el límite máximo permitido es entre 6.5 y 8.5.
+
+  \textbf{2. Hardness:} La dureza es la capacidad del agua para diluir el jabón causado por el calcio y el magnesio.
+
+  \textbf{3. Solids (Total dissolved solids - TDS):} El agua tiene la capacidad de disolver una amplia gama de minerales o sales inorgánicos y algunos orgánicos. Estos minerales producen un sabor no deseado y un color diluido en apariencia de agua. Este es el parámetro importante para el uso del agua. El agua con alto valor de TDS indica que el agua está altamente mineralizada. El límite deseable de TDS es de 500 mg/l y el límite máximo es de 1000 mg/l que se prescribe para beber.
+
+  \textbf{4. Chloramines:} El cloro y la cloramina son los principales desinfectantes que se utilizan en los sistemas públicos de agua. Las cloraminas se forman con mayor frecuencia cuando se agrega amoníaco al cloro para tratar el agua potable. Los niveles de cloro de hasta 4 miligramos por litro (mg/L o 4 partes por millón (ppm)) se consideran seguros en el agua potable.
+
+  \textbf{5. Sulfate:} Los sulfatos son sustancias naturales que se encuentran en minerales, suelo y rocas. Están presentes en el aire ambiente, el agua subterránea, las plantas y los alimentos. El principal uso comercial del sulfato es la industria química. La concentración de sulfato en el agua de mar es de aproximadamente 2700 miligramos por litro (mg/L). Varía de 3 a 30 mg/L en la mayoría de los suministros de agua dulce, aunque se encuentran concentraciones mucho más altas (1000 mg/L) en algunas ubicaciones geográficas.
+
+  \textbf{6. Conductivity:} El agua pura no es un buen conductor de corriente eléctrica, más bien es un buen aislante. El aumento de la concentración de iones mejora la conductividad eléctrica del agua. Generalmente, la cantidad de sólidos disueltos en el agua determina la conductividad eléctrica. La conductividad eléctrica (EC) en realidad mide el proceso iónico de una solución que le permite transmitir corriente. Según los estándares de la OMS, el valor de CE no debe exceder los 400 $\mu$S/cm.
+
+  \textbf{7. Organic$\_$carbon:} El carbono orgánico total (TOC) en las fuentes de agua proviene de la materia orgánica natural en descomposición (NOM), así como de fuentes sintéticas. TOC es una medida de la cantidad total de carbono en compuestos orgánicos en agua pura. Según la EPA de EE.UU. el nivel de carbono orgánico permitido es de $\<$2 mg/L en agua potable y $\<$4 mg/L en el agua (de origen) para ser tratada.
+
+  \textbf{8. Trihalomethanes:} Los THM son sustancias químicas que se pueden encontrar en el agua tratada con cloro. La concentración de THM en el agua potable varía según el nivel de material orgánico en el agua, la cantidad de cloro necesaria para tratar el agua y la temperatura del agua que se está tratando. Los niveles de THM de hasta 80 ppm se consideran seguros en el agua potable.
+
+  \textbf{9. Turbidity:} La turbidez del agua depende de la cantidad de materia sólida presente en estado suspendido. Es una medida de las propiedades emisoras de luz del agua y la prueba se utiliza para indicar la calidad de la descarga de desechos con respecto a la materia coloidal. El valor medio recomendado por la OMS es de 5,00 NTU.
+
+  \textbf{10. Potability:} Indica si el agua es segura para el consumo humano, donde 1 significa potable y 0 significa no potable. 
+
+El objetivo de escoger este dataset es el de aplicar un algoritmo de regresión logística o un árbol de decisión que permita clasificar a partir de ciertas características si el agua potable o no.
+
+
+## 2.2 Selección de datos
+
+A partir de las variables descritas en el apartado anterior se advierte que cada una de ellas es importante para determinar si el agua es potable o no, la única que en primera instancia puede parecer prescindible en el análisis es la variable '\textit{Hardness}' pero será necesario realizar un análisis estadístico para observar la correlación que dicha variable guarda con el resto para poder determinar si es posible obviarla o no. Por otro lado, al observar los datos con detenimiento se advierten valores vacíos o NA's, por tanto será necesario llevar a cabo un proceso de limpieza de datos y estudiar si existen datos outliers o extremos.
+
+```{r}
+# Se establece work directory
+#setwd("
+#C:/Users/Willy/Desktop/Master UOC/1r Semestre/Tipología y ciclo de vida de los datos/Practica 2 -")
+
+# Se cargará el set de datos y se almacenará en la variable 'data'
+data <- read.csv("water_potability.csv", sep = ",", stringsAsFactors = TRUE)
+head(data)
+```
+
+## 2.3 Limpieza de datos
+
+Como se ha comentado anteriormente tras una primera observación de los datos se advierten diversos valores vacíos o Na's por tanto será necesario tratar dichos valores, en primera instancia se pensaba aplicar el método kNN ya que es uno de los métodos más populares para tratar datos vacíos pero se ha optado finalmente por aplicar el método missforest() ya que este es más robusto al no ser tan sensible a los cambios en el valor k. 
+
+```{r}
+# Se calcula la estructura del dataset, se observan las 
+# variables y el número de registros
+str(data)
+
+# También se puede aplicar dim para observar las dimensiones del set
+dim(data)
+
+# Se calcula si existen valores vacíos
+sum(is.na(data))
+
+#Cargamos missForest para imputar los valores perdidos
+if( !require('missForest')) install.packages('missForest')
+library('missForest')
+if( !require('VIM')) install.packages("VIM")
+library('VIM')
+
+#Se Representa los valores perdidos para cada variable 
+aggr(data, numbers=TRUE, sortVars=TRUE, labels=names(data), 
+     cex.axis=.7, gap=3, ylab=c("Missing data","Pattern"))
+
+```
+
+Se puede observar gráficamente como los valores perdidos se concentrar en general en la variable 'Sulfate', 'ph' y 'Trihalomethanes' teniendo esto en cuenta se procurará aplicar missforest a dichas columnas para tratar estos valores y de esta manera poder trabajar con el dataset mas adelante.
+
+```{r}
+# Se aplica metodo de imputación missForest()
+data_missforest<-missForest(data, variablewise = TRUE)
+
+# Se observa el resultado
+head(data_missforest$ximp)
+class(data_missforest)
+```
+
+Se advierte tras una primera observación que no existen o parecen no existir valores vacíos o perdidos, por tanto, el método missForest parece haber tenido éxito, por otro lado, se advierte que el resultado obtenido no es un dataframe que es lo que nos interesa ya que se trabajará a partir de él, por ello se debe realizar las siguientes transformaciones para volver a obtenerlo:
+
+```{r}
+# Obtenemos nuevo dataset sin valores vacíos
+data_mf <- data_missforest$ximp
+
+# Se confirma que no tenemos valores vacíos 
+which(is.na(data_mf))
+
+# Obtenemos una visualización del resultado
+head(data_mf)
+str(data_mf)
+dim(data_mf)
+```
+
+Tras finalizar el proceso de imputación se confirma que no existen valores vacios en el nuevo set de datos, que la estructura del mismo continua intacta, por tanto el proceso se ha llevado a cabo con éxito. A continuación, a lo largo del proceso de limpieza de datos otra de las características que se deben analizar es si existen ceros en el set de datos.
+
+```{r}
+# Comprobación de si existen valores ceros en el set de datos
+length(which(data_mf=="0"))
+```
+
+Se advierte que existen valores igual a 0, pero es necesario evaluar si estos tienen sentido dentro del set de datos o si será necesario tratarlos. Tras observar el dataset a lo largo de todo el proceso seguido, se advierte que lo más probable es que estos '0' se encuentren dentro de la variable \textit{Potability} ya que esta indica con '0' cuando el agua no es potable y con '1' cuando sí lo es.
+
+```{r}
+# Se comprueba el número de 0 de la variable potability
+length(data_mf$Potability[data_mf$Potability=="0"])
+
+# Se comprueba el número de 1 de la variable potability
+length(data_mf$Potability[data_mf$Potability=="1"])
+
+# Se confirma que el número total cuadra con el total de registros
+length(data_mf$Potability[data_mf$Potability=="1"])+
+  length(data_mf$Potability[data_mf$Potability=="0"])
+
+```
+
+Se observa que la gran mayoría de '0' se encuentra en esta variable y no es necesario tratarlos, por tanto, se puede avanzar a comprobar si existen valores \textit{outliers} o extremos. Para ello se aplicarán gráficos boxplot y funciones boxplot.stats para cada una de las variables y a partir de ellos decidir que acciones llevar a cabo.
+
+```{r}
+# Se obtienen los valores outliers de la variable ph
+boxplot.stats(data_mf$ph)$out
+```
+
+Se advierten valores atípicos en cuanto a la media pero no rompen de manera notoria la tendencia, si estos fueran valores más extremos como por ejemplo '999' o '5000' o cualquier valor de ese estilo, se procedería a marcarlos como NA y realizar el mismo proceso anterior de missforest() para asignarles un valor más adecuado pero en este caso no será necesario, este será el razonamiento que se siga con los siguientes análisis de valores extremos. Por otro lado, se ha detectado el valor '0' que faltaba del análisis anterior, al ser un único valor no debería tener un efecto significativo en el análisis y al existir valores próximos a '0' no se sabe a ciencia cierta si se trata de un error al introducir dicho valor o un valor correcto, de todas formas se procederá a sustituir dicho valor por la media de la variable 'ph'.
+
+```{r}
+# Sustituimos el valor '0' por la media de la variable
+data_mf$ph[data_mf$ph == 0]
+data_mf$ph[data_mf$ph == 0] <- mean(data_mf$ph)
+
+# Se comprueba que ya existe ningún valor igual a 0
+data_mf$ph[data_mf$ph == 0]
+```
+
+Se continua con la variable 'Hardness' y la siguiente a esta:
+
+```{r}
+boxplot.stats(data_mf$Hardness)$out
+boxplot.stats(data_mf$Solids)$out
+boxplot.stats(data_mf$Chloramines)$out
+boxplot.stats(data_mf$Sulfate)$out
+boxplot.stats(data_mf$Conductivity)$out
+boxplot.stats(data_mf$Organic_carbon)$out
+boxplot.stats(data_mf$Trihalomethanes)$out
+boxplot.stats(data_mf$Turbidity)$out
+boxplot.stats(data_mf$Potability)$out
+```
+
+Tras observar los valores outliers obtenidos se ha tomado la decisión de no tratarlos ya que se considera que entran dentro de las posibles medidas pese a que se alejen de la media, ya que muchos de estos valores son muy parecidos entre si y se considera que se obtienen en contextos que favorecen a estas mediciones, si fueran valores mucho más extraños o que no siguieran una cierta pauta si que se procedería a marcarlos como NA's y luego aplicar el método missForest() para rellenar esos valores, además la proporción de estos valores atípicos en comparación con el número total de registros es muy pequeña por tanto no deberían tener un impacto significativo en el análisis, en caso de estar cometiendo un error al permitirlos.
+
+## 2.4 Análisis de los datos
+
+En este punto sería necesario escoger las variables con las cuales se pretende realizar el futuro modelo pero en primer lugar se realizarán pruebas sobre la normalidad, la homogeneidad de la varianza y la correlación entre las diferentes variables que conforman el dataset para más delante poder descartar aquellas que no se consideren necesarias. En primer lugar, se procede a realizar un test sobre la normalidad del set de datos, para ello se parte de la siguiente hipótesis para el caso del test de \textit{Shapiro}.
+
+\begin{center}
+      $H_o$: p-value $>$ 0.05 = Distribución normal
+\end{center}
+\begin{center}
+      $H_1$: p-value $<$ 0.05 = No hay Distribución normal
+\end{center}
+
+A partir de esta hipótesis se procede a aplicar el test de Shapiro a las diferentes variables que conforman el dataset para comprobar su distribución.
+
+```{r}
+# Se aplica test de Shapiro
+shapiro.test(data_mf$ph)
+shapiro.test(data_mf$Hardness)
+shapiro.test(data_mf$Solids)
+shapiro.test(data_mf$Chloramines)
+shapiro.test(data_mf$Sulfate)
+shapiro.test(data_mf$Conductivity)
+shapiro.test(data_mf$Organic_carbon)
+shapiro.test(data_mf$Trihalomethanes)
+shapiro.test(data_mf$Turbidity)
+shapiro.test(data_mf$Potability)
+```
+
+Se puede observar como en algunas de las variables no se cumple la hipótesis nula, por tanto, siendo rigurosos con el test de Shapiro se podría afirmar que no existe distribución normal en ciertas variables del dataset. Por otro, lado, teniendo en cuenta el teorema central del limite y siendo el dataset de 3276 registros, lo cual se considera lo suficientemente grande, se podría afirmar que si se sigue una distribución normal. De todas formas se ha de tener en cuenta que la variable 'Potability' es una variable binaria o incluso podría ser categórica que indica si el agua es potable o no y en este caso es lógico que no siga una distribución normal.
+
+A continuación se procede a evaluar la homogeneidad de la varianza, se aplicará el test de \textit{Fligner-Killieen} ya que se parte del test de Shapiro anterior en el cual se ha visto que no existe normalidad, se procurará ser rigurosos por ello se parte de la conclusión de dicho test.
+
+```{r}
+fligner.test(Potability ~ Organic_carbon, data = data_mf)
+
+fligner.test(Potability ~ ph, data = data_mf)
+
+fligner.test(ph ~ Organic_carbon, data = data_mf)
+
+```
+
+Observando los resultados se advierte que no existe homogeneidad en la varianza ya que no se obtienen resultados, por tanto no se puede comprobar si se cumple la hipótesis nula de que la varianza es la misma para las dos muestras evaluadas. Por otro lado, nos encontramos ante un set de datos que no contiene una distribución normal, según el test de Shapiro y de la misma forma no es homogéneo en cuanto a varianza, por tanto si se desea calcular la correlación entre variables, se debe realizar por el método de \textit{Spearman} y no Pearson.
+
+Teniendo esto en cuenta para realizar los análisis estadísticos del set de datos, será necesario recurrir a funciones o test no paramétricos como \textit{Wilcoxon} o \textit{Mann-Whitney}.
+
+```{r}
+# Se procede a calcular la matriz de correlación del set de datos
+if (!require("corrplot")) install.packages("corrplot")
+library(corrplot)
+cor(data_mf, method = "spearman")
+corrplot(cor(data_mf, method = "spearman"))
+```
+
+Se puede observar a partir del gráfico de correlaciones como no se advierten relaciones muy fuertes entre variables tanto positivas como negativas, no parece que haya una relación muy fuerte en cuanto al hecho de que al crecer una variable en valor, otra crezca de la misma manera o al revés, por otro lado, todas aportan información.
+
+A continuación se realizará un análisis estadístico de los datos que consistirá en aplicar un contraste de hipótesis sobre dos muestras del set de datos, concretamente la variable potability y hardeness, se realizará dicho análisis con el objetivo de saber un poco más acerca de la incidencia de esta variable en la determinación de si el agua es potable o no, ya que a partir de la información del dataset no queda claro la influencia de la misma, en otras variables se establece un limite que se debe superar si se desea considerar el agua potable o no pero en esta variable, hardeness, no. Además tras el análisis de correlaciones no se ha observado ninguna variable con una correlación muy fuerte como para que sea de interés inmediato, por ello, se realizará este análisis sobre esta variable.
+
+Se parte de la siguiente pregunta: ¿El hecho de que el agua sea potable convella un nivel superior de 'Hardeness' en el agua?
+
+```{r}
+# Se obtienen los diferentes casos para poder aplicar el contraste
+Hardeness_Si_Potable <- data_mf[data_mf$Potability==1,]$Hardness
+Hardeness_No_Potable <- data_mf[data_mf$Potability==0,]$Hardness
+```
+
+En caso de que la media sea igual significará que la variable hardness no determina según un valor mas grande o mas pequeño si el agua es potable o no, si por el contraria resulta diferente nos aportará información de que si tiene cierta influencia. Por tanto, la hipótesis queda de la siguiente manera:
+
+\begin{center}
+      $H_o$: $\mu_1$ = $\mu_2$ 
+\end{center}
+\begin{center}
+      $H_1$: $\mu_1$ $\not=$ $\mu_2$
+\end{center}
+
+Se supondrá un valor de $\alpha$ = 0.05 y se aplicará una función willcox.
+
+```{r}
+wilcox.test(Hardeness_Si_Potable , Hardeness_No_Potable, alternative = "less")
+
+```
+
+Se advierte un resultado mayor a $\alpha$ por tanto se acepta la hipótesis nula y se considera que el nivel medio de hardness de agua potable es el mismo nivel que el agua no potable, por tanto, se puede concluir que no es una variable que marque la diferencia según su valor para determinar si el agua es potable o no, pero se incluirá en los análisis para corroborar efectivamente que no influye. 
+
+
+```{r}
+write.csv(data_mf, "water_potability_clean.csv", row.names = FALSE)
+```
+
+
+A continuación se realizará un modelo predictivo de regresión logística con el objetivo de que nos permita predecir, a partir de ciertos datos, si el agua de dicha zona analizada es potable o no.
+
+### 2.4.1 Modelo Regresión Logística
+
+En primer lugar almacenaremos las variables de interés del set de datos en diversas variables
+
+```{r}
+# Guardamos variables
+ph <- data_mf$ph
+Hardness <- data_mf$Hardness
+Solids <- data_mf$Solids
+Chloramines <- data_mf$Chloramines
+Sulfate <- data_mf$Sulfate
+Conductivity <- data_mf$Conductivity
+Organic_carbon <- data_mf$Organic_carbon
+Trihalomethanes <- data_mf$Trihalomethanes
+Turbidity <- data_mf$Turbidity
+Potability <- data_mf$Potability
+
+#Aplicamos regresión logistica 
+
+model_1 <- glm(Potability ~ ph + Solids + Chloramines + Sulfate + Conductivity + Organic_carbon + Trihalomethanes + Turbidity, data = data_mf ,family = "binomial")
+model_2 <- glm(Potability ~ ph + Solids + Chloramines + Sulfate, data = data_mf ,family = "binomial")
+
+summary(model_1)
+summary(model_2)
+
+# Valor AIC obtenido
+summary(model_1)$aic
+summary(model_2)$aic
+```
+
+En modelos de regresión logística la medida que indica una buena bondad del modelo es el valor \textit{AIC}, por tanto de entre los diferentes modelos se escoge aquel que dicho valor sea inferior, en este caso, el modelo 1. Por otra parte, no parecen ser resultados muy prometedores ya que se trata de un valor de AIC bastante elevado, por ello se procede a elaborar un modelo más complejo basado en un árbol de decisión.
+
+### 2.4.2 Modelo árbol de decisión
+Previamente a la aplicación del modelo de árbol de decisión se realizará la transformación de la variable 'Potability' para convertirla en una variable categórica ya que de esta manera se conseguirá un resultado gráficamente más fácil de entender.
+
+```{r}
+data_mf$Potability[data_mf$Potability == 1] <- "Si"
+data_mf$Potability[data_mf$Potability == 0] <- "No"
+data_mf$Potability<-as.factor(data_mf$Potability)
+str(data_mf$Potability)
+levels(data_mf$Potability)
+plot(data_mf$Potability)
+```
+Una vez realizado este cambio se continua con el proceso.
+
+```{r}
+# Se genera dataset con los datos cambiados aleatoriamente para evitar overfitting
+set.seed(1)
+data_random <- data_mf[sample(nrow(data_mf)),]
+
+# Se establecerá un corte de 2/3 para el training y 1/3 para el test
+set.seed(2184)
+summary(data_random[10])
+
+# Se escoge la variable de interés según su posición en el dataframe
+str(data_random[10])
+y <- data_random[,10]
+x <- data_random[, -10]
+
+split_prop <- 3
+max_split <- floor(nrow(x)/split_prop)
+indexes = sample(1:nrow(data_mf), size=floor(((split_prop-1)/split_prop)*nrow(data_mf)))
+
+# Se generan los sets de training y test
+trainX<-x[indexes,]
+trainy<-y[indexes]
+testX<-x[-indexes,]
+testy<-y[-indexes]
+
+
+# Se comprueba que se cumplen los cortes
+dim(trainX)
+dim(testX)
+```
+
+Una vez los diferentes sets de datos han sido creados, se crea el modelo de training que realizará la clasificación y aprenderá cuando clasificar el agua como potable(1) o no potable(0).
+
+```{r}
+# Se crea modelo de training y se representan sus resultados
+trainy = as.factor(trainy)
+model <- C50::C5.0(trainX, trainy,rules=TRUE )
+summary(model)
+```
+
+Observando los resultados se advierte un error en la precisión de 36.1%, lo cual quiere decir que se han predicho correctamente el 63.9% de los casos de entrenamiento, no es un valor pequeño de acurracy pero no es el más alentador, de todos modos habrá que observar los resultados de las predicciones con datos que el modelo no haya visto, es decir, habrá que evaluar los resultados del modelo de test. 
+
+En la siguiente imagen se muestra el modelo de árbol de decisión creado:
+
+```{r}
+model <- C50::C5.0(trainX, trainy)
+plot(model)
+```
+
+Se puede observar las variables que el algoritmo ha considerado más oportunas para realizar la clasificación, los diferentes valores que considera y a partir de los cuales realiza la clasificación idónea, por otro lado, se advierte que no existen variables fuertemente determinantes para realizar la clasificación del agua, ya que de las 9 variables que formaban parte del análisis, el algoritmo ha considerado oportunas únicamente 2, esto guardaría cierta relación con la imagen obtenida anteriormente de la correlación, ya se advertía entonces poco relación entre las variables y la variable de interés. A continuación se evaluará el modelo de test.
+
+```{r}
+# Creamos el modelo predictivo del set de test y se obtiene su accuracy
+predicted_model <- predict( model, testX, type="class")
+print(sprintf("La precisión del árbol de decisión es: %.4f %%",
+              100*sum(predicted_model==testy)/length(predicted_model)))
+
+# Obtenemos confusion matrix
+mat_conf<-table(testy,Predicted=predicted_model)
+mat_conf
+```
+
+En cuanto a los resultados obtenidos por le modelo con el set de test, la accuracy es muy similar al modelo del set de training, como se ha comentado anteriormente no es una precisión baja pero tampoco es idónea, lo ideal sería tener una precisión por encima del 75%, es posible que se haya cometido algún error en la elaboración del modelo o este directamente relacionado con lo comentado en cuanto a la correlación entre variables.
+
+
+## 2.5 Conclusión
+
+A lo largo del proyecto se ha trabajo en un problema sobre potabilidad del agua, un tema muy interesante y con enfoques sostenibles, se han realizado diversos ajustes para conseguir el set de datos idóneo sobre el que trabajar, se ha aplicado la función missforest() para impitar de manera correcta aquellos valores nulos, se han realizado análisis para evaluar los valores outliers, se han llevado a cabo estudios estadísticos relacionados con la correlación, la normalidad, la homogeneidad de varianza, pse a realizar estas pruebas no ha sido posible establecer la variable más significativa para predecir la variable de interés que era el objetivo del proyecto. 
+
+Sobre el objetivo del proyecto, se puede afirmar que no se cumple, ya que como se ha visto anteriormente la accuracy obtenida en el modelo no es la idónea como para darlo por válido ya que esta es inferior a la precisión deseada, de todas formas el estudio se ha realizado correctamente pero los resultados no acompañan y se valora la posibilidad de que el dataset necesite de más variables, significativas, para poder determinar con mayor exactitud si el agua es potable o no, esto esta relacionado con lo comentado en apartados anteriores sobre la correlación y el valor tan pequeño que presentaban en algunas variables.
+
+
+
+
+
+
+
+| Contribuciones | Firma | 
+| -- | -- |
+| Investigación previa | J | 
+| Redacción de las respuestas | J | 
+ 
+
+
